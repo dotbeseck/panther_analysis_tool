@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "poetry-demo"
+version = "0.18.0"
+description = "Panther command line interface for writing, testing, and packaging policies/rules."
+authors = ["Panther Labs Inc"]
+readme = "README.md"
+packages = [{include = "panther_analysis_tool"}]
+include = [
+    "panther_analysis_tool/log_schemas/__init__.py",
+    "panther_analysis_tool/log_schemas/user_defined.py",
+    "panther_analysis_tool/backend/graphql/*.graphql"
+]
+
+[tool.poetry.dependencies]
+python = "3.9"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
