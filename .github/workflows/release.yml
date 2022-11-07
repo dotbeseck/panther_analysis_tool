@@ -17,23 +17,22 @@ jobs:
       with:
         python-version: "3.9"
 
-    - name: Install pipenv
-      run: pip install pipenv
-
-    - name: Install Core Utilities
-      run: make install
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
 
     - name: Clean old release (if any)
       run: rm -rf dist
 
     - name: Build release package
-      run: pipenv run python3 setup.py sdist
+      run: poetry build
 
     - name: Test package works
       run: |
-        pipenv run pip install dist/*.tar.gz
-        pipenv run panther_analysis_tool --version
-        make test
+        pip install dist/*.tar.gz dist/*.whl
+        poetry run panther_analysis_tool --version
 
     - name: Publish to pypi
-      run: pipenv run twine upload dist/*.tar.gz -u panther -p {{ secrets.PYPI_PASSWORD }} --non-interactive
+      run: poetry publish
+      env:
+        POETRY_HTTP_BASIC_PYPI_USERNAME: panther
+        POETRY_HTTP_BASIC_PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}

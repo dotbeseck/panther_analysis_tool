@@ -17,6 +17,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
+import importlib
 import argparse
 import base64
 import hashlib
@@ -1471,7 +1472,7 @@ def setup_parser() -> argparse.ArgumentParser:
         + "managing Panther policies and rules.",
         prog="panther_analysis_tool",
     )
-    parser.add_argument("--version", action="version", version=f"panther_analysis_tool {version}")
+    parser.add_argument("--version", action="version", version=f"panther_analysis_tool {importlib.metadata.version('panther_analysis_tool')}")
     parser.add_argument("--debug", action="store_true", dest="debug")
     subparsers = parser.add_subparsers()
 
