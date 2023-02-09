@@ -211,7 +211,7 @@ class Detection:
         }
 
     def to_panther_core_detection(
-            self,
+        self,
     ) -> Union[panther_core.rule.Rule, panther_core.policy.Policy]:
         if self.detection_type is SdkContentType.POLICY:
             return panther_core.policy.Policy(self.to_panther_core_config())
