@@ -84,7 +84,7 @@ def run(args: argparse.Namespace, indirect_invocation: bool = False) -> Tuple[in
 
 
 def _filter_detections(
-    args: argparse.Namespace, detections: List[panthersdk.Detection]
+        args: argparse.Namespace, detections: List[panthersdk.Detection]
 ) -> List[panthersdk.Detection]:
     """Filters out the detections to be tested by using the command line args.
 
@@ -113,9 +113,9 @@ def _filter_detections(
 
 
 def _run_unit_tests(
-    detections: List[panthersdk.Detection],
-    data_models: List[panthersdk.DataModel],
-    min_tests: int = 0,
+        detections: List[panthersdk.Detection],
+        data_models: List[panthersdk.DataModel],
+        min_tests: int = 0,
 ) -> bool:
     """Runs the unit tests for the given detections, printing out test results and a summary.
 
@@ -153,6 +153,7 @@ def _run_unit_tests(
 
             core_detection = detection.to_panther_core_detection()
             logging.error(unit_test.get_mocks())
+            logging.error(core_detection.module.__dict__)  # DEBUG
             with patch.multiple(core_detection.module, **unit_test.get_mocks()):
                 detection_result = core_detection.run(
                     panther_core.PantherEvent(
