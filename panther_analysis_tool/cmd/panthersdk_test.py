@@ -153,15 +153,15 @@ def _run_unit_tests(
 
             core_detection = detection.to_panther_core_detection()
             logging.error(unit_test.get_mocks())
-            
-            print("DO", dir(core_detection.module.__dict__["do"]))
-            print(core_detection.module.__dict__["do"].__globals__)
-            print()
-            print()
-            print("MODULE")
-            print(core_detection.module.__dict__["do"].__module__)
-            with patch.multiple(core_detection.module.__dict__["do"], **unit_test.get_mocks()):
-                # with patch.multiple(core_detection.module, **unit_test.get_mocks()):
+
+            # print("DO", dir(core_detection.module.__dict__["do"]))
+            # print(core_detection.module.__dict__["do"].__globals__)
+            # print()
+            # print()
+            # print("MODULE")
+            # print(core_detection.module.__dict__["do"].__module__)
+            # with patch.multiple(core_detection.module.__dict__["do"], **unit_test.get_mocks()):
+            with patch.multiple(core_detection.module, **unit_test.get_mocks()):
                 detection_result = core_detection.run(
                     panther_core.PantherEvent(
                         unit_test.data, logs_data_model
