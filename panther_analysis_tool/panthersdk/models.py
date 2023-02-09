@@ -3,6 +3,7 @@ import dataclasses
 import enum
 import json
 from typing import Any, Dict, Final, List, Optional, Union
+from unittest.mock import MagicMock
 
 import panther_core.data_model
 import panther_core.policy
@@ -108,7 +109,18 @@ class Filter:
         return self.func.get_name()
 
 
+class UnitTestMock:
+    _PATH_TO_NAME: Final = ["d", "name"]
+    _PATH_TO_RET_VAL: Final = ["d", "return_value"]
+
+    def __init__(self, mock: Dict):
+        self.mock_name = pat_utils.deep_get(mock, self._PATH_TO_NAME, "stub")
+        self.mock_ret_val = pat_utils.deep_get(mock, self._PATH_TO_RET_VAL, "None")
+
+
 class UnitTest:
+    _PATH_TO_MOCKS: Final = ["d", "mocks"]
+
     def __init__(self, test: Dict):
         self.origin: str = pat_utils.deep_get(test, ["o", "name"], "No origin found")
         self.data: Dict = json.loads(pat_utils.deep_get(test, ["d", "data"], "{}"))
@@ -116,8 +128,14 @@ class UnitTest:
         self.expect_match: bool = bool(pat_utils.deep_get(test, ["d", "expect_match"], True))
         self.fail_reasons: List[str] = []  # only used if test failed
 
+        mocks = pat_utils.deep_get(test, self._PATH_TO_MOCKS, [])
+        self.mocks: List[UnitTestMock] = [UnitTestMock(m) for m in pat_utils.to_list(mocks)]
+
     def add_fail_reason(self, reason: str) -> None:
         self.fail_reasons.append(reason)
+
+    def get_mocks(self) -> Dict[str, MagicMock]:
+        return {m.mock_name: MagicMock(return_value=m.mock_ret_val) for m in self.mocks}
 
 
 class Detection:
@@ -181,6 +199,7 @@ class Detection:
         prg += f"            return {match_val}\n"
         prg += f"    return {not match_val}\n"
 
+        print(prg)
         return prg
 
     def to_panther_core_config(self) -> Dict[str, Any]:
@@ -192,7 +211,7 @@ class Detection:
         }
 
     def to_panther_core_detection(
-        self,
+            self,
     ) -> Union[panther_core.rule.Rule, panther_core.policy.Policy]:
         if self.detection_type is SdkContentType.POLICY:
             return panther_core.policy.Policy(self.to_panther_core_config())
